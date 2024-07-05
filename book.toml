@@ -1,0 +1,6 @@
+[book]
+authors = ["Lean Mendoza"]
+language = "en"
+multilingual = false
+src = "src"
+title = "DCL Explorer Book"
