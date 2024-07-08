@@ -1,2 +1,2 @@
 # Experimental Features
-Work in progress
+In this section, you can find the somehow for new features only available in the Bevy Explorer. These features might or might not be implemented by the Foundation client. At least this works as a research experiment, so the path is smoother than only having the conversation or feature request card.
