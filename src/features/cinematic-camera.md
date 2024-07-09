@@ -53,11 +53,11 @@ interface PBCameraModeArea {
 </details>
 
 Summary: 
-- It adds `CT_CINAMATIC` option to `CameraType` enum which is used for the property `mode` in the `CameraModeArea` component.
+- It adds `CT_CINEMATIC` option to `CameraType` enum which is used for the property `mode` in the `CameraModeArea` component.
 - It adds `cinematicSettings` and `userColliderRange` for `CameraModeArea` properties.
 
 
-When `CT_CINAMATIC` is selected, the renderer uses the `cinematicSettings`. The main property for cinematic settings is the `cameraEntity,` which is the entity to which the camera will be attached. 
+When `CT_CINEMATIC` is selected, the renderer uses the `cinematicSettings`. The main property for cinematic settings is the `cameraEntity,` which is the entity to which the camera will be attached. 
 
 The `cameraEntity's Transform` (which falls back to `Transform.Identity`) is used to take position and rotation and zoom by the `scale.z` value.
 
