@@ -49,7 +49,14 @@ The value indicates how scrolled is the container where `0.0` is at the beginnin
 ## Examples
 Copy one of the following code to the index.ts and then run the Bevy Explorer preview with `npm start`.
 <details>
-  <summary>Scrollable UI with a Scroll Container</summary>
+
+  <summary>  Scrollable UI with a Scroll Container  
+
+  ![showing how the bevy explorer is downloading](../2-2-example-scrollable-ui.gif)
+  
+  </summary>
+
+
 
   ```typescript
 import ReactEcs, { Label, UiEntity } from '@dcl/react-ecs'
