@@ -132,6 +132,7 @@ Summary:
 
 These new two components are used to map a internal gltf node into an Entity. It MUST be a child from the `GltfContainer` and after you create the component, the renderer will create the `Transform`, `Material`, `MeshRenderer` and `MeshCollider` if apply. This enables you to receive the updates in case an animation is playing and that node is affected, or to modify them by yourself.
 
+Note: Skinned meshes are not supported independently from a GltfContainer as they rely on bone nodes in the gltf, but you can load a GLTF containing a skinned mesh and link to the mesh node.
 
 # Examples
 You can check the examples scenes in the [examples repo](https://github.com/dclexplorer/experimental-example-scenes)
