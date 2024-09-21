@@ -1,0 +1,1024 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>DCL Explorer Book</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="bevy-explorer-dev.html"><strong aria-hidden="true">1.</strong> Developing with Bevy Explorer</a></li><li class="chapter-item expanded "><a href="features/index.html"><strong aria-hidden="true">2.</strong> Experimental Features</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="features/cinematic-camera.html"><strong aria-hidden="true">2.1.</strong> Cinematic Camera</a></li><li class="chapter-item expanded "><a href="features/scrollables-ui.html"><strong aria-hidden="true">2.2.</strong> Scrollable UIs</a></li><li class="chapter-item expanded "><a href="features/gltf-internal.html"><strong aria-hidden="true">2.3.</strong> Exposing internal GLTF nodes</a></li><li class="chapter-item expanded "><a href="features/in-world-ui.html"><strong aria-hidden="true">2.4.</strong> In world UI</a></li><li class="chapter-item expanded "><a href="features/lights.html"><strong aria-hidden="true">2.5.</strong> Lights</a></li></ol></li><li class="chapter-item expanded "><a href="mobile.html"><strong aria-hidden="true">3.</strong> Mobile explorers</a></li><li class="chapter-item expanded affix "><a href="help.html">Help and community</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">DCL Explorer Book</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>Welcome to the <strong>DCL Explorer Book</strong>! This is a work-in-progress user guide for the Explorer funded by the DAO. Two clients are currently being developed, the <a href="https://github.com/decentraland/godot-explorer/">Godot Explorer</a> and the <a href="https://github.com/decentraland/bevy-explorer">Bevy Explorer</a>. The first targets a mobile explorer, and the second only a desktop.</p>
+<p>This book provides more technical and creator-oriented information on using these Explorers. Since the April 2024 proposal passed, the Bevy Explorer has become part of our sandbox, where we can experiment with the Decentraland Protocol and discover a path to extending the current limitations.</p>
+<p>Let's start with how to run a scene in the first section and then the possibility only available in the Bevy Explorer in the second section.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="developing-with-bevy-explorer"><a class="header" href="#developing-with-bevy-explorer">Developing with Bevy Explorer</a></h1>
+<p>If you're new to scene creation, we highly recommend starting with the <a href="https://docs.decentraland.org/creator/development-guide/sdk7/installation-guide/#the-decentraland-editor">Decentraland documentation</a>. This will provide you with a solid foundation before diving into Bevy Explorer.</p>
+<h2 id="setting-up-a-scene"><a class="header" href="#setting-up-a-scene">Setting Up a Scene</a></h2>
+<p>To set up a scene with Bevy Explorer and enable experimental features, follow these steps:</p>
+<ol>
+<li><strong>Navigate to Your Scene's Root Folder</strong>: Open your terminal and navigate to the root folder of your scene.</li>
+<li><strong>Install <code>protocol-squad</code> branch</strong>: Run the following command to install the necessary packages from the protocol-squad branch:
+<pre><code class="language-sh">npm install @dcl/sdk@protocol-squad @dcl/sdk-commands@protocol-squad --save-exact
+</code></pre>
+</li>
+</ol>
+<h2 id="running-a-preview-with-bevy-explorer"><a class="header" href="#running-a-preview-with-bevy-explorer">Running a Preview with Bevy Explorer</a></h2>
+<p>To preview your scene using Bevy Explorer:</p>
+<ol>
+<li><strong>Start the Preview</strong>: In your scene's root folder, run:
+<pre><code class="language-sh">    npm start
+</code></pre>
+</li>
+</ol>
+<p>This will open Bevy Explorer with your scene running. Hot reloading is enabled, so any changes to the code or assets will automatically refresh the scene.</p>
+<p>Note: the first time you run this in the scene, or if you delete the <code>node_modules</code> folder, the Bevy Explorer download takes place.</p>
+<p><img src="1-downloading-bevy-explorer.png" alt="showing how the bevy explorer is downloading" /></p>
+<h2 id="updating-the-sdk-and-bevy-explorer-version"><a class="header" href="#updating-the-sdk-and-bevy-explorer-version">Updating the SDK and Bevy Explorer Version</a></h2>
+<p>To update the SDK and Bevy Explorer to the latest version:</p>
+<ol>
+<li><strong>Reinstall Packages</strong>:
+Repeat the installation command from the "Setting Up a Scene" section:
+<pre><code class="language-sh">npm install @dcl/sdk@protocol-squad @dcl/sdk-commands@protocol-squad --save-exact
+</code></pre>
+The SDK will update automatically if a new version of Bevy Explorer is required.</li>
+</ol>
+<h2 id="rolling-back-to-a-previous-sdk-version"><a class="header" href="#rolling-back-to-a-previous-sdk-version">Rolling Back to a Previous SDK Version</a></h2>
+<p>If you need to revert to the latest stable SDK version:</p>
+<ol>
+<li><strong>Install Latest Stable Versions</strong>: In your scene's root folder, run:
+<pre><code class="language-sh">npm install @dcl/sdk@latest @dcl/sdk-commands@latest --save-exact
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="experimental-features"><a class="header" href="#experimental-features">Experimental Features</a></h1>
+<p>In this section, you can find the somehow for new features only available in the Bevy Explorer. These features might or might not be implemented by the Foundation client. At least this works as a research experiment, so the path is smoother than only having the conversation or feature request card.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cinematic-camera"><a class="header" href="#cinematic-camera">Cinematic Camera</a></h1>
+<p>This experimental feature enables you to run a camera attached to an arbitrary entity.</p>
+<h2 id="what-it-changes"><a class="header" href="#what-it-changes">What it changes</a></h2>
+<p>This proposal changed the <code>CameraModeArea</code> and <code>AvatarModifierArea</code> components.</p>
+<h3 id="cameramodearea"><a class="header" href="#cameramodearea">CameraModeArea</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">declare const enum CameraType {
+    CT_FIRST_PERSON = 0,
+    CT_THIRD_PERSON = 1,
++    /** CT_CINEMATIC - controlled by the scene */
++    CT_CINEMATIC = 2
+}
+
+interface PBCameraModeArea {
+    /** the 3D size of the region */
+    area: Vector3 | undefined;
+    /** the camera mode to enforce */
+    mode: CameraType;
++    cinematicSettings?: CinematicSettings | undefined;
++    /** if true, the player will be considered inside the area when they are within 0.3m of the area. default true */
++    useColliderRange?: boolean | undefined;
+}
+
++interface CinematicSettings {
++    /** Entity that defines the cinematic camera transform. */
++    cameraEntity: number;
++    /**
++     * Position -&gt; camera's position
++     * Rotation -&gt; camera's direction
++     * scale.z -&gt; zoom level
++     * scale.x and scale.y -&gt; unused
++     */
++    allowManualRotation?: boolean | undefined;
++    /** how far the camera can rotate around the y-axis / look left/right, in radians. default unrestricted */
++    yawRange?: number | undefined;
++    /** how far the camera can rotate around the x-axis / look up-down, in radians. default unrestricted */
++    pitchRange?: number | undefined;
++    /** note: cameras can never look up/down further than Vec3::Y */
++    rollRange?: number | undefined;
++    /** minimum zoom level. must be greater than 0. defaults to the input zoom level */
++    zoomMin?: number | undefined;
++    /** maximum zoom level. must be greater than 0. defaults to the input zoom level */
++    zoomMax?: number | undefined;
++}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>It adds <code>CT_CINEMATIC</code> option to <code>CameraType</code> enum which is used for the property <code>mode</code> in the <code>CameraModeArea</code> component.</li>
+<li>It adds <code>cinematicSettings</code> and <code>userColliderRange</code> for <code>CameraModeArea</code> properties.</li>
+</ul>
+<p>When <code>CT_CINEMATIC</code> is selected, the renderer uses the <code>cinematicSettings</code>. The main property for cinematic settings is the <code>cameraEntity,</code> which is the entity to which the camera will be attached.</p>
+<p>The <code>cameraEntity's Transform</code> (which falls back to <code>Transform.Identity</code>) is used to take position and rotation and zoom by the <code>scale.z</code> value.</p>
+<p>The other properties enable the player input for the camera controller with well-known ranges; if they are not assigned, the camera controller is disabled.</p>
+<p>Note: The player input for the avatar is kept, and the player could accidentally exit the area. To avoid that, see the changes in <code>AvatarModifierArea</code>.</p>
+<h3 id="avatarmodifierarea"><a class="header" href="#avatarmodifierarea">AvatarModifierArea</a></h3>
+<p>Work in progress</p>
+<details>
+    <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">interface PBAvatarModifierArea {
+    /** the 3D size of the region */
+    area: Vector3 | undefined;
+    /** user IDs that can enter and remain unaffected */
+    excludeIds: string[];
+    /** list of modifiers to apply */
+    modifiers: AvatarModifierType[];
++    movementSettings?: AvatarMovementSettings | undefined;
++    /** if true, the player will be considered inside the area when they are within 0.3m of the area. default true */
++    useColliderRange?: boolean | undefined;
+}
+
++interface AvatarMovementSettings {
++    controlMode?: AvatarControlType | undefined;
++    /** if not explicitly set, the following properties default to user's preference settings */
++    runSpeed?: number | undefined;
++    /** how fast the player gets up to speed or comes to rest. higher = more responsive */
++    friction?: number | undefined;
++    /** how fast the player accelerates vertically when not on a solid surface, in m/s. should normally be negative */
++    gravity?: number | undefined;
++    /** how high the player can jump, in meters. should normally be positive. gravity must have the same sign for jumping to be possible */
++    jumpHeight?: number | undefined;
++    /** max fall speed in m/s. should normally be negative */
++    maxFallSpeed?: number | undefined;
++    /** speed the player turns in tank mode, in radians/s */
++    turnSpeed?: number | undefined;
++    /** speed the player walks at, in m/s */
++    walkSpeed?: number | undefined;
++    /** whether to allow player to move at a slower speed (e.g. with a walk-key or when using a gamepad/joystick). defaults to true */
++    allowWeightedMovement?: boolean | undefined;
++}
+</code></pre>
+</details>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<p>Copy one of the following code to the index.ts and then run the Bevy Explorer preview with <code>npm start</code>.</p>
+<details>
+  <summary>Cinematic camera example with lemminiscate curve example</summary>
+<pre><code class="language-typescript">import { CameraModeArea, CameraType, engine, Entity, Material, MeshRenderer, PBCameraModeArea, Transform } from "@dcl/sdk/ecs";
+import { Color3, Color4, Quaternion, Scalar, Vector3 } from "@dcl/sdk/math";
+
+function colorAddAlpha(baseColor: Color4 | Color3, a: number): Color4 {
+  return { ...baseColor, a }
+}
+
+function createCameraModeArea(position: Vector3, size: Vector3, value: Partial&lt;PBCameraModeArea&gt;, debug: boolean = true) {
+  // When debug=true, it enables a box with alpha representation
+  if (debug) {
+      const height = 0.1
+      const floorRepresentationEntity = engine.addEntity()
+      const floorPosition = Vector3.create(position.x, position.y - size.y / 2 + height, position.z)
+      MeshRenderer.setBox(floorRepresentationEntity)
+      Material.setPbrMaterial(floorRepresentationEntity, { albedoColor: colorAddAlpha(Color4.Magenta(), 0.2) })
+      Transform.create(floorRepresentationEntity, { position: floorPosition, scale: Vector3.create(size.x, height, size.z) })
+
+      const areaRepresentationEntity = engine.addEntity()
+      MeshRenderer.setBox(areaRepresentationEntity)
+      Material.setPbrMaterial(areaRepresentationEntity, { albedoColor: colorAddAlpha(Color4.Green(), 0.1) })
+      const repPosition = Vector3.create(position.x, position.y, position.z)
+      Transform.create(areaRepresentationEntity, { position: repPosition, scale:  size})
+  }
+
+  const entity = engine.addEntity()
+  CameraModeArea.create(entity, {
+      mode: CameraType.CT_FIRST_PERSON,
+      area: size,
+      ...value,
+  })
+  Transform.create(entity, { position })
+}
+
+function createLemniscateMovement(centerPosition: Vector3, height: number, pathLength: number, periodSeg: number = 1.0, showDebug: boolean = false): Entity {
+  const movingEntity = engine.addEntity()
+  const systemName = `${movingEntity}-bernoulli-lemniscate-curve-movement-system`
+  const speedModifier = 2 * Math.PI / periodSeg
+
+  // A small debug box to show the position of the entity moved and the boundary of the path
+  if (showDebug) {
+      const debug = engine.addEntity()
+      const debugBoxSize = 0.1
+      MeshRenderer.setBox(debug)
+      Material.setPbrMaterial(debug, { albedoColor: Color4.Red() })
+      Transform.create(debug, { scale: Vector3.create(debugBoxSize, debugBoxSize, debugBoxSize), parent: movingEntity })
+
+      const debugArea = engine.addEntity()
+      MeshRenderer.setBox(debugArea)
+      Material.setPbrMaterial(debugArea, { albedoColor: colorAddAlpha(Color4.Magenta(), 0.2) })
+      Transform.create(debugArea, { scale: Vector3.create(pathLength, height, pathLength * Math.sqrt(2) / 4), position: {...centerPosition} })
+  }
+  
+  let t = 0
+  const amplitude = pathLength / 2
+  engine.addSystem((dt) =&gt; {
+      const transform = Transform.getMutableOrNull(movingEntity)
+      // auto clean
+      if (!transform) {
+          engine.removeSystem(systemName)
+          return
+      }
+
+      // t is acummulated time but periodic each 2pi
+      t = Scalar.repeat(t + (speedModifier * dt), 2 * Math.PI)
+      const ct = Math.cos(t)
+      const st = Math.sin(t)
+      const previousPos = {...transform.position}
+
+      // lemminiscate curve
+      transform.position.x = centerPosition.x + (amplitude * ct / (1 + (st * st)))
+      transform.position.z = centerPosition.z + (amplitude * ct * st / (1 + (st * st)))
+
+      // sin square 
+      transform.position.y = centerPosition.y - height / 2 + (height * Math.sin(t/2) * Math.sin(t/2))
+
+      // rotation calculated from the previous position (with forward vector)
+      Quaternion.fromLookAtToRef(previousPos, transform.position, Vector3.Up(), transform.rotation)
+  }, 0, systemName)
+
+  // Initial position
+  Transform.create(movingEntity, { position: {...centerPosition} })
+
+  return movingEntity
+}
+
+export function main() {
+  console.log("## Cinematic Example Test ##")
+
+  // Camera area position and size
+  const cameraAreaPosition = Vector3.create(4, 2.5, 4)
+  const cameraAreaSize = Vector3.create(3, 3, 3)
+
+  // Movement parameters
+  const movementCenteredPosition = Vector3.create(8, 2, 8)
+  const pathHeight = 1.0
+  const pathLength = 4.0
+  const periodSeg = 6
+
+  const movingEntity = createLemniscateMovement(movementCenteredPosition, pathHeight, pathLength, periodSeg, true)
+  createCameraModeArea(cameraAreaPosition, cameraAreaSize, {
+      mode: CameraType.CT_CINEMATIC,
+      cinematicSettings: {
+          cameraEntity: movingEntity
+      }
+  })
+}
+</code></pre>
+</details>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="scrollable-ui"><a class="header" href="#scrollable-ui">Scrollable UI</a></h1>
+<p>This experimental feature enables you to add scrollbars to UI in case of overflow the container size.</p>
+<h2 id="what-it-changes-1"><a class="header" href="#what-it-changes-1">What it changes</a></h2>
+<p>This proposal changed the <code>UiTransform</code> and add a new component <code>UiScrollResult</code>.</p>
+<h3 id="uitransform"><a class="header" href="#uitransform">UiTransform</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">+/**
++ * @public
++ * The scroll-visible determines if the scrollbars are shown when the scroll overflow is enabled
++ */
++export type ScrollVisibleType = 'horizontal' | 'vertical' | 'both' | 'hidden'
+
+export interface UiTransformProps {
+    ...,
++  /** A reference value to identify the element, default empty */
++  elementId?: string
++  /** default position=(0,0) if it aplies, a vector or a reference-id */
++  scrollPosition?: Vector2 | string
++  /** default ShowScrollBar.SSB_BOTH */
++  scrollVisible?: ScrollVisibleType
+}
+
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>It adds <code>elementId</code> to identify each UI element, it's a unique identifier. You can use it to identify outside the UI system, or to reference it in the <code>scrollPosition</code></li>
+<li>It adds <code>scrollPosition</code> to manually set the current scroll position. It can be a normalized 2D vector (0-1, 0-1) or a string to reference another UI element.</li>
+<li>It adds <code>scrollVisible</code> to set the bars visibility</li>
+</ul>
+<h3 id="uiscrollresult"><a class="header" href="#uiscrollresult">UiScrollResult</a></h3>
+<pre><code class="language-diff">+export interface PBUiScrollResult {
++    value: PBVector2 | undefined;
++}
+</code></pre>
+<p>The value indicates how scrolled is the container where <code>0.0</code> is at the beginning and <code>1.0</code> full scrolled. The x-value is for horizontal axes and y-value for the vertical one.</p>
+<h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
+<p>Copy one of the following code to the index.ts and then run the Bevy Explorer preview with <code>npm start</code>.</p>
+<details>
+  <summary>  Scrollable UI with a Scroll Container  
+<p><img src="features/../2-2-example-scrollable-ui.gif" alt="showing how the bevy explorer is downloading" /></p>
+  </summary>
+<pre><code class="language-typescript">import ReactEcs, { Label, UiEntity } from '@dcl/react-ecs'
+import { UiScrollResult, UiTransform, engine } from '@dcl/sdk/ecs'
+import { Color4 } from '@dcl/sdk/math'
+import { Button, Input, ReactEcsRenderer } from '@dcl/sdk/react-ecs'
+import { type Vector2 } from '~system/EngineApi'
+
+class UiExample {
+  // autoincrement counter, only for demonstration purposes
+  private counter: number = 0
+  // target for scroll position
+  private target: string | Vector2 = { x: 0.5, y: 0.5 }
+  // text to display in the scroll controller
+  private scrollText = 'indeterminated'
+  // id of the scroll container, to identify it in the controller
+  private readonly scrollContainerId = 'my-scroll-container-A'
+
+  constructor() {
+  	engine.addSystem(this.controllerSystem.bind(this))
+  }
+
+  controllerSystem(): void {
+  	for (const [, pos, uiTransform] of engine.getEntitiesWith(
+  		UiScrollResult,
+  		UiTransform
+  	)) {
+  		if (uiTransform.elementId !== this.scrollContainerId) {
+  			continue
+  		}
+
+  		if (pos.value === undefined) {
+  			break
+  		}
+
+  		if (pos.value.y &lt;= 0) {
+  			this.scrollText = 'top'
+  		} else if (pos.value.y &gt;= 1) {
+  			this.scrollText = 'bottom'
+  		} else if (pos.value.y &lt; 0.5) {
+  			this.scrollText = 'near top'
+  		} else {
+  			this.scrollText = 'near bottom'
+  		}
+
+  		if (pos.value.x &lt;= 0) {
+  			this.scrollText += ' left'
+  		} else if (pos.value.x &gt;= 1) {
+  			this.scrollText += ' right'
+  		} else {
+  			this.scrollText += ' middle'
+  		}
+  	}
+
+  	this.counter++
+  }
+
+  // This UI is only for demonstration purposes, not the focus of this example
+  ScrollController(): ReactEcs.JSX.Element {
+  	return (
+  		&lt;UiEntity
+  			uiTransform={{
+  				flexDirection: 'column',
+  				position: { left: '25%', top: '10%' },
+  				width: '200',
+  				height: '300',
+  				justifyContent: 'space-evenly',
+  				alignItems: 'center'
+  			}}
+  			uiBackground={{ color: Color4.create(0.0, 0.0, 0.0, 1.0) }}
+  		&gt;
+  			&lt;Label value="Scroll controller" color={Color4.Green()} fontSize={14} /&gt;
+  			&lt;Button
+  				fontSize={16}
+  				uiTransform={{ width: '80%' }}
+  				value="Focus first item"
+  				onMouseDown={() =&gt; {
+  					this.target = 'first'
+  				}}
+  			/&gt;
+  			&lt;Button
+  				fontSize={16}
+  				uiTransform={{ width: '80%' }}
+  				value="Focus second item"
+  				onMouseDown={() =&gt; {
+  					this.target = 'second'
+  				}}
+  			/&gt;
+  			&lt;Label
+  				fontSize={16}
+  				value={`Currently:\n${this.scrollText}`}
+  				color={Color4.White()}
+  			/&gt;
+
+  			&lt;Input
+  				fontSize={16}
+  				uiTransform={{ width: '90%' }}
+  				placeholder="type target"
+  				onChange={(value) =&gt; {
+  					console.log(`change ${value}`)
+  					this.target = value
+  				}}
+  				onSubmit={(value) =&gt; {
+  					console.log(`submit ${value}`)
+  					this.target = value
+  				}}
+  			/&gt;
+  		&lt;/UiEntity&gt;
+  	)
+  }
+
+  Scrolly(): ReactEcs.JSX.Element {
+  	return (
+  		&lt;UiEntity
+  			uiTransform={{
+  				flexDirection: 'column',
+  				alignItems: 'center',
+  				justifyContent: 'space-between',
+  				positionType: 'absolute',
+  				width: '400',
+  				height: '600',
+  				position: { right: '8%', bottom: '3%' },
+
+  				// new properties
+  				overflow: 'scroll', // enable scrolling
+  				scrollPosition: this.target, // if you want to set the scroll position programatically (maybe an action from the user)
+  				elementId: this.scrollContainerId // id to identify the scroll result if you need to
+  			}}
+  			uiBackground={{
+  				color: Color4.White()
+  			}}
+  		&gt;
+  			&lt;Label
+  				uiTransform={{
+  					height: 'auto',
+  					width: 'auto',
+  					margin: '200px',
+  					padding: `10px`,
+  					// new property: we set the id, it must be unique, and we will use it to identify the scroll position
+  					elementId: 'first'
+  				}}
+  				value={`first (${this.counter})`}
+  				color={Color4.Black()}
+  				fontSize={18}
+  				textAlign="middle-center"
+  				key="first"
+  			/&gt;
+  			&lt;Label
+  				uiTransform={{
+  					height: 'auto',
+  					width: 'auto',
+  					margin: '200px',
+  					padding: `10px`,
+  					// new property: we set the id, it must be unique, and we will use it to identify the scroll position
+  					elementId: 'second'
+  				}}
+  				value="second"
+  				color={Color4.Black()}
+  				fontSize={18}
+  				textAlign="middle-center"
+  			/&gt;
+  			&lt;Label
+  				uiTransform={{
+  					height: 'auto',
+  					width: 'auto',
+  					margin: '200px',
+  					padding: `10px`,
+  					// new property: we set the id, it must be unique, and we will use it to identify the scroll position
+  					elementId: 'third'
+  				}}
+  				value="third"
+  				color={Color4.Black()}
+  				fontSize={18}
+  				textAlign="middle-center"
+  			/&gt;
+  			&lt;Label
+  				uiTransform={{
+  					height: 'auto',
+  					width: 'auto',
+  					margin: '200px',
+  					padding: `10px`,
+  					// new property: we set the id, it must be unique, and we will use it to identify the scroll position
+  					elementId: 'fourth'
+  				}}
+  				value="fourth"
+  				color={Color4.Black()}
+  				fontSize={18}
+  				textAlign="middle-center"
+  			/&gt;
+  			&lt;Label
+  				uiTransform={{
+  					height: 'auto',
+  					width: 'auto',
+  					margin: '200px',
+  					padding: `10px`,
+  					// new property: we set the id, it must be unique, and we will use it to identify the scroll position
+  					elementId: 'fifth'
+  				}}
+  				value="fifth"
+  				color={Color4.Black()}
+  				fontSize={18}
+  				textAlign="middle-center"
+  			/&gt;
+  		&lt;/UiEntity&gt;
+  	)
+  }
+
+  render(): ReactEcs.JSX.Element[] {
+  	return [this.Scrolly(), this.ScrollController()]
+  }
+}
+
+export function main(): void {
+  const ui = new UiExample()
+  ReactEcsRenderer.setUiRenderer(ui.render.bind(ui))
+}
+
+</code></pre>
+</details>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="exposing-internal-gltf-nodes"><a class="header" href="#exposing-internal-gltf-nodes">Exposing internal GLTF nodes</a></h1>
+<p>This experimental feature enables you to access to the internal structure of a GLTF/GLB. Some of the use cases are:</p>
+<ul>
+<li>Use pointer events for specific colliders inside the GLTF</li>
+<li>Make code-animations (by modifying internal nodes transform)</li>
+<li>Modify internal materials</li>
+<li>Use internal meshes and put a video texture</li>
+<li>Not guessing the animation clip names (now you can fetch the animation list)</li>
+<li>Attach to internal entities</li>
+</ul>
+<h2 id="what-it-changes-2"><a class="header" href="#what-it-changes-2">What it changes</a></h2>
+<p>This proposal:</p>
+<ul>
+<li>Add properties into the <code>GltfLoadingState</code> to be able to fetch the internal structure</li>
+<li>Add the <code>GltfNode</code> and <code>GltfNodeState</code> component</li>
+<li>Add the <code>gltf</code> property in the <code>Material</code> component</li>
+<li>Add the <code>GltfMesh</code> option to the <code>MeshRenderer</code> and <code>MeshCollider</code></li>
+</ul>
+<h3 id="gltfloadingstate"><a class="header" href="#gltfloadingstate">GltfLoadingState</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">export interface PBGltfContainerLoadingState {
++    animationNames: string[];
+    currentState: LoadingState;
++    materialNames: string[];
++    meshNames: string[];
++    nodePaths: string[];
++    skinNames: string[]; // @deprecated this will not be finally used
+}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>It adds the <code>animationNames</code> property, here you have the entire list of animation available from your GLTF</li>
+<li>It adds the <code>materialNames</code> property, you can fetch the material name to be referenced in the material's <code>gltf</code> property</li>
+<li>It adds the <code>meshNames</code> property, you can fetch the mesh name to be referenced in the MeshRenderer and MeshCollider <code>gltf</code> property</li>
+<li>It adds the <code>nodePaths</code> property, you can fetch the node name to be referenced in the GltfNode <code>path</code> property</li>
+</ul>
+<h3 id="material"><a class="header" href="#material">Material</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">export interface PBMaterial {
++    gltf?: PBMaterial_GltfMaterial | undefined;
+    material?: {
+        $case: "unlit";
+        unlit: PBMaterial_UnlitMaterial;
+    } | {
+        $case: "pbr";
+        pbr: PBMaterial_PbrMaterial;
+    } | undefined;
+}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>It adds the <code>gltf</code> material reference, you can reference a material inside a GLTF exposed in <code>GltfLoadingState.materialNames</code>. When the gltfMaterial is set, the fallback values for undefined <code>pbr</code> or <code>unlit</code> are the GLTF ones instead of the default specified in the documentation. If you want to set the original default, you have to do it explicitly.</li>
+</ul>
+<h3 id="meshrenderer"><a class="header" href="#meshrenderer">MeshRenderer</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">+ MeshRenderer.setGltfMesh(...)
+
++  /**
++   * @public
++   * Set a gltf internal mesh in the MeshCollider component
++   * @param entity - entity to create or replace the MeshRenderer component
++   * @param source - the path to the gltf
++   * @param meshName - the name of the mesh in the gltf
++   */
++  setGltfMesh(entity: Entity, source: string, meshName: string, colliderLayers?: ColliderLayer | ColliderLayer[]): void
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>Now you can set a MeshRenderer from a mesh resource inside a GltfContainer</li>
+</ul>
+<h3 id="meshcollider"><a class="header" href="#meshcollider">MeshCollider</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">+ MeshCollider.setGltfMesh(...)
+
++  /**
++   * @public
++   * Set a gltf internal mesh in the MeshCollider component
++   * @param entity - entity to create or replace the MeshCollider component
++   * @param source - the path to the gltf
++   * @param meshName - the name of the mesh in the gltf
++   * @param colliderMask - the set of layer where the collider reacts, default: Physics and Pointer
++   */
++  setGltfMesh(entity: Entity, source: string, meshName: string, colliderLayers?: ColliderLayer | ColliderLayer[]): void
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>Now you can set a MeshCollider from a mesh resource inside a GltfContainer</li>
+</ul>
+<h3 id="gltfnode-and-gltfnodestate"><a class="header" href="#gltfnode-and-gltfnodestate">GltfNode and GltfNodeState</a></h3>
+<details>
+  <summary>Experimental component added diff</summary>
+<pre><code class="language-diff">+export interface PBGltfNode {
++    path: string;
++}
++export interface PBGltfNodeState {
++    error?: string | undefined;
++    state: GltfNodeStateValue;
++}
++export const enum GltfNodeStateValue {
++    GNSV_FAILED = 1,
++    GNSV_PENDING = 0,
++    GNSV_READY = 2
++}
+</code></pre>
+</details>
+<p>These new two components are used to map a internal gltf node into an Entity. It MUST be a child from the <code>GltfContainer</code> and after you create the component, the renderer will create the <code>Transform</code>, <code>Material</code>, <code>MeshRenderer</code> and <code>MeshCollider</code> if apply. This enables you to receive the updates in case an animation is playing and that node is affected, or to modify them by yourself.</p>
+<p>Note: Skinned meshes are not supported independently from a GltfContainer as they rely on bone nodes in the gltf, but you can load a GLTF containing a skinned mesh and link to the mesh node.</p>
+<h1 id="examples-2"><a class="header" href="#examples-2">Examples</a></h1>
+<p>You can check the examples scenes in the <a href="https://github.com/dclexplorer/experimental-example-scenes">examples repo</a></p>
+<p>The folders starting with <code>gltf-example</code> are the ones using this experimental feature.</p>
+<video controls>
+  <source src="../0804.mp4" type="video/mp4">
+</video><div style="break-before: page; page-break-before: always;"></div><h1 id="in-world-ui"><a class="header" href="#in-world-ui">In World UI</a></h1>
+<p>This feature introduces the <code>UiCanvasTexture</code> option and <code>PBUiCanvas</code> component, enabling developers to create and render UI elements onto a texture that can be used within the 3D world.</p>
+<h2 id="what-it-changes-3"><a class="header" href="#what-it-changes-3">What it changes</a></h2>
+<p>This proposal:</p>
+<ul>
+<li>Adds the <code>UiCanvasTexture</code> option for <code>Texture</code>, allowing you to link a UI entity to a texture and configure properties such as wrap mode and filter mode.</li>
+<li>Adds the <code>UiCanvas</code> component, allowing the definition of the dimensions and background color of the UI canvas and to use as the root entity for an defined UI.</li>
+<li>Updates the <code>TextureUnion</code> to include the new <code>UiCanvasTexture</code> option.</li>
+<li>Introduces new methods in the <code>ReactEcsRenderer</code> for setting up UI textures.</li>
+</ul>
+<h3 id="pbuicanvas"><a class="header" href="#pbuicanvas">PBUiCanvas</a></h3>
+<details>
+  <summary>New typescript declaration</summary>
+<pre><code class="language-diff">+ export interface PBUiCanvas {
++    color?: PBColor4 | undefined;
++    height: number;
++    width: number;
++ }
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>It adds the <code>PBUiCanvas</code> message, which allows you to define the width, height, and optional background color of the canvas. The color defaults to transparent (<code>0, 0, 0, 0</code>) if not provided.</li>
+<li>The canvas can be attached to a root entity, and the properties such as width, height, and color can be adjusted according to your needs.</li>
+</ul>
+<h3 id="textureunion"><a class="header" href="#textureunion">TextureUnion</a></h3>
+<details>
+  <summary>Difference between experimental version and original one</summary>
+<pre><code class="language-diff">export interface TextureUnion {
+    // (undocumented)
+    tex?: {
+        $case: "texture";
+        texture: Texture;
+    } | {
+        $case: "avatarTexture";
+        avatarTexture: AvatarTexture;
+    } | {
+        $case: "videoTexture";
+        videoTexture: VideoTexture;
++    } | {
++        $case: "uiTexture";
++        uiTexture: UiCanvasTexture;
+    } | undefined;
+}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>The <code>TextureUnion</code> interface is updated to include <code>uiTexture</code>, enabling the attachment of a UI canvas to a texture.</li>
+</ul>
+<h3 id="reactecsrenderer"><a class="header" href="#reactecsrenderer">ReactEcsRenderer</a></h3>
+<details>
+  <summary>New methods added to ReactEcsRenderer</summary>
+<pre><code class="language-diff">+ interface ReactEcsRenderer {
++     setTextureRenderer: (entity, ui) =&gt; void
++ }
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>The <code>ReactEcsRenderer</code> interface now provides the <code>setTextureRenderer</code> method, allowing developers to set a texture renderer for a specific entity that is linked to a UI canvas.</li>
+</ul>
+<h2 id="example-usage"><a class="header" href="#example-usage">Example Usage</a></h2>
+<p>The following is an example of how to use the <code>UiCanvasTexture</code> and <code>PBUiCanvas</code> in practice.</p>
+<pre><code class="language-typescript">// true for test in-world-ui and false to get the regular ui
+const useTexture = true
+
+// Initialize the UI
+const ui = new UiExample()
+
+// Create an entity to serve as the UI canvas
+const uiCanvas = engine.addEntity();
+if (useTexture) {
+  // Create a UI canvas with specified width, height, and background color
+  UiCanvas.create(uiCanvas, { width: 1024, height: 1024, color: Color4.Black() });
+  
+  // Set the texture renderer to the created canvas
+  ReactEcsRenderer.setTextureRenderer(uiCanvas, ui.render.bind(ui));
+} else {
+  // Set the default UI renderer
+  ReactEcsRenderer.setUiRenderer(ui.render.bind(ui));
+}
+</code></pre>
+<p>This example demonstrates how to create and render a UI canvas texture in a virtual world. You can either use the in-world UI as a texture applied to a 3D object or render a regular 2D UI.</p>
+<h1 id="examples-3"><a class="header" href="#examples-3">Examples</a></h1>
+<p>You can find example scenes demonstrating the use of the new lighting components in the <a href="https://github.com/dclexplorer/experimental-example-scenes">examples repo</a>.</p>
+<p>Look for folders prefixed with <code>in-world-ui</code> for examples using this feature.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="lights"><a class="header" href="#lights">Lights</a></h1>
+<p>This feature introduces enhanced control over lighting in your scenes, allowing developers to modify global light settings, as well as create point lights and spotlights attached to non-root entities. Some key use cases include:</p>
+<ul>
+<li>Override the default global directional light (sunlight) for dynamic lighting environments</li>
+<li>Create point lights (e.g., lightbulbs) or spotlights for localized light sources</li>
+<li>Control shadows, brightness, and color for more realistic scene rendering</li>
+</ul>
+<p>Also this new feature is integrated with the <code>Exposing internal GLTF nodes</code> allowing modyfing Lights from GLTF or add to entities there as well.</p>
+<h2 id="what-it-changes-4"><a class="header" href="#what-it-changes-4">What it changes</a></h2>
+<p>This proposal:</p>
+<ul>
+<li>Adds the <code>PBLight</code> component for defining both global and local light sources</li>
+<li>Adds the <code>PBSpotlight</code> component for creating spotlights</li>
+<li>Adds the <code>PBGlobalLight</code> component for controlling scene-wide ambient and directional light settings (only for Root entity)</li>
+</ul>
+<h3 id="pblight"><a class="header" href="#pblight">PBLight</a></h3>
+<details>
+  <summary>New declaration</summary>
+<pre><code class="language-diff">+export interface PBLight {
++    color?: PBColor3 | undefined;
++    enabled?: boolean | undefined;
++    illuminance?: number | undefined;
++    shadows?: boolean | undefined;
++}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>The <code>PBLight</code> component introduces a flexible interface for defining light sources. Lights can be enabled or disabled, adjusted for brightness (illuminance), and set to cast or ignore shadows.</li>
+<li>Lights can be attached to non-root entities to simulate localized light effects like lamps or bulbs.</li>
+<li>The <code>color</code> property allows you to specify the light color using the <code>PBColor3</code> format.</li>
+</ul>
+<h4 id="illuminance"><a class="header" href="#illuminance">Illuminance</a></h4>
+<p>The <code>illuminance</code> property defines the light’s brightness in lux (lumens/m²). For global directional lights, this is applied uniformly. For point or spotlights, this specifies the illuminance at a 1m distance from the light source.</p>
+<h4 id="shadows"><a class="header" href="#shadows">Shadows</a></h4>
+<p>The <code>shadows</code> property toggles whether a light casts shadows. The engine may limit the number of lights casting shadows based on performance settings.</p>
+<h3 id="pbspotlight"><a class="header" href="#pbspotlight">PBSpotlight</a></h3>
+<details>
+  <summary>New Declaration</summary>
+<pre><code class="language-diff">+export interface PBSpotlight {
++    angle: number;
++    innerAngle?: number | undefined;
++}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>The <code>PBSpotlight</code> component turns a point light into a spotlight, emitting light in a cone defined by the <code>angle</code> property.</li>
+<li>Use the <code>innerAngle</code> property to define a smooth fall-off for light intensity within the spotlight cone.</li>
+<li>Spotlights are useful for simulating directional light sources like torches or headlights.</li>
+</ul>
+<h4 id="angle"><a class="header" href="#angle">Angle</a></h4>
+<p>The <code>angle</code> property (in radians) defines the width of the cone in which the light is emitted. For example, a typical torch would have an angle of around <code>0.15</code>.</p>
+<h4 id="inner-angle"><a class="header" href="#inner-angle">Inner Angle</a></h4>
+<p>The <code>innerAngle</code> defines the core area of maximum brightness. The light intensity decreases smoothly between the <code>innerAngle</code> and <code>angle</code>.</p>
+<h3 id="pbgloballight"><a class="header" href="#pbgloballight">PBGlobalLight</a></h3>
+<details>
+  <summary>New Declaration</summary>
+<pre><code class="language-diff">+export interface PBGlobalLight {
++    ambientBrightness?: number | undefined;
++    ambientColor?: PBColor3 | undefined;
++    direction?: PBVector3 | undefined;
++}
+</code></pre>
+</details>
+<p>Summary:</p>
+<ul>
+<li>The <code>PBGlobalLight</code> component allows you to adjust the global ambient and directional lighting for the entire scene.</li>
+<li>You can modify the ambient light's brightness (<code>ambientBrightness</code>) and color (<code>ambientColor</code>), which are applied uniformly across the scene.</li>
+<li>The <code>direction</code> property changes the angle at which the global directional light (e.g., sunlight) is cast.</li>
+</ul>
+<h4 id="direction"><a class="header" href="#direction">Direction</a></h4>
+<p>Use the <code>direction</code> property to define the directional light’s vector in the scene. This is especially useful for controlling the sunlight's position based on the time of day or desired atmosphere.</p>
+<h4 id="ambient-light"><a class="header" href="#ambient-light">Ambient Light</a></h4>
+<p>The <code>ambientColor</code> and <code>ambientBrightness</code> properties control the global ambient lighting. Ambient light affects the entire scene and is not tied to any particular light source.</p>
+<h1 id="examples-4"><a class="header" href="#examples-4">Examples</a></h1>
+<p>You can find example scenes demonstrating the use of the new lighting components in the <a href="https://github.com/dclexplorer/experimental-example-scenes">examples repo</a>.</p>
+<p>Look for folders prefixed with <code>lights</code> for examples using this feature.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="mobile-explorers"><a class="header" href="#mobile-explorers">Mobile explorers</a></h1>
+<p>Work in progress</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="help-and-community"><a class="header" href="#help-and-community">Help and community</a></h1>
+<p>You can ask for help in the following server:</p>
+<ul>
+<li>Our own Discord server <a href="https://discord.com/invite/6mGqPnjujT">DCL Explorer Discord invitation link</a></li>
+<li>The <code>#sdk-support</code> channel in the <a href="discord.gg/xhHm8mSqtG">Decentraland DAO Discord server invitation link</a></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
