@@ -95,3 +95,8 @@ if (useTexture) {
 ```
 
 This example demonstrates how to create and render a UI canvas texture in a virtual world. You can either use the in-world UI as a texture applied to a 3D object or render a regular 2D UI.
+
+# Examples
+You can find example scenes demonstrating the use of the new lighting components in the [examples repo](https://github.com/dclexplorer/experimental-example-scenes).
+
+Look for folders prefixed with `in-world-ui` for examples using this feature.
